@@ -9,6 +9,10 @@ class IndoorMonitoring extends Model
 {
     use HasFactory;
 
+    protected $table = 'indoor_monitoring';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'time',
         'temperature',

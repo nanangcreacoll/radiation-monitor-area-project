@@ -1,5 +1,5 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<ul class="navbar-nav bg-gradient-info sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
@@ -18,8 +18,8 @@
     <hr class="sidebar-divider my-0">
 
     <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
-        <a class="nav-link" href="#">
+    <li class="nav-item {{ Request::is('/') ? 'active' : '' }}">
+        <a class="nav-link" href="/">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
@@ -28,7 +28,7 @@
     <hr class="sidebar-divider">
 
     <!-- Nav Item - Pages Collapse Menu -->
-    <li class="nav-item">
+    <li class="nav-item {{ Request::is('outdoor-monitor') || Request::is('indoor-monitor') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
             aria-expanded="true" aria-controls="collapseTwo">
             <i>
@@ -41,14 +41,14 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Pilih Monitor:</h6>
-                <a class="collapse-item" href="/monitor-utama">Monitor Utama</a>
-                <a class="collapse-item" href="/monitor-dalam">Monitor Dalam</a>
+                <a class="collapse-item" href="/outdoor-monitor">Monitor Utama</a>
+                <a class="collapse-item" href="/indoor-monitor">Monitor Dalam</a>
             </div>
         </div>
     </li>
 
     <!-- Nav Item - Utilities Collapse Menu -->
-    <li class="nav-item">
+    <li class="nav-item {{ Request::is('outdoor-monitor-data-tables') || Request::is('indoor-monitor-data-tables') ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
             aria-expanded="true" aria-controls="collapseUtilities">
             <i class="fas fa-fw fa-table"></i>
@@ -58,8 +58,8 @@
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Pilih Data Monitor:</h6>
-                <a class="collapse-item" href="/monitor-utama-data-tables">Monitor Utama</a>
-                <a class="collapse-item" href="/monitor-dalam-data-tables">Monitor Dalam</a>
+                <a class="collapse-item" href="/outdoor-monitor-data-tables">Monitor Utama</a>
+                <a class="collapse-item" href="/indoor-monitor-data-tables">Monitor Dalam</a>
             </div>
         </div>
     </li>

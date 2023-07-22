@@ -9,6 +9,10 @@ class OutdoorMonitoring extends Model
 {
     use HasFactory;
 
+    protected $table = 'outdoor_monitoring';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'time',
         'temperature',

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\IndoorMonitoringController;
+use App\Http\Controllers\OutdoorMonitoringController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('/store-data-outdoor-monitor', [OutdoorMonitoringController::class, 'storeData'])->middleware('verifyApiKey');
+Route::post('/store-data-indoor-monitor', [IndoorMonitoringController::class, 'storeData'])->middleware('verifyApiKey');
+Route::get('/fetch-data-indoor-monitor', [OutdoorMonitoringController::class, 'fetchDataIndoorMonitor'])->middleware('verifyApiKey');
+
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });

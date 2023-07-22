@@ -19,7 +19,3 @@ use Illuminate\Support\Facades\Route;
 Route::post('/store-data-outdoor-monitor', [OutdoorMonitoringController::class, 'storeData'])->middleware('verifyApiKey');
 Route::post('/store-data-indoor-monitor', [IndoorMonitoringController::class, 'storeData'])->middleware('verifyApiKey');
 Route::get('/fetch-data-indoor-monitor', [OutdoorMonitoringController::class, 'fetchDataIndoorMonitor'])->middleware('verifyApiKey');
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });

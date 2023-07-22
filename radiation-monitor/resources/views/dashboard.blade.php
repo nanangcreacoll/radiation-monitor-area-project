@@ -1,7 +1,16 @@
 @extends('layouts.main')
 @section('content')
     <div class="container-fluid">
-        <h1 class="h3 ml-3 mb-3 text-gray-800">Dashboard</h1>
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 ml-3 mb-3 text-gray-800">
+                Dashboard
+            </h1>
+            <div class="d-none d-sm-inline-block shadow-sm">
+                <p class="mr-3 ml-3 mb-2 mt-2">
+                    {{ $currentDay }}, {{ $currentDate }}
+                </p>
+            </div>
+        </div>
 
         <div class="row">
             <div class="col-xl-6 col-md-6 mb-4">

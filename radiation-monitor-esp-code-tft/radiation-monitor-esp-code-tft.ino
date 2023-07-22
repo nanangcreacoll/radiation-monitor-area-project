@@ -82,6 +82,6 @@ void loop() { //main cycle
 }
 
 float outputSieverts(float x)  {
-  float y = x * 0.00812;
+  float y = x * 0.0057;
   return y;
 }

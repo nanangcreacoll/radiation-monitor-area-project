@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IndoorMonitoringController;
-use App\Models\IndoorMonitoring;
+use App\Http\Controllers\OutdoorMonitoringController;
 use Illuminate\Support\Facades\Route;
 use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
@@ -20,7 +20,6 @@ use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 Route::get('/', [DashboardController::class, 'index']);
 Route::get('/indoor-monitor', [IndoorMonitoringController::class, 'index']);
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/outdoor-monitor', [OutdoorMonitoringController::class, 'index']);
+Route::get('/indoor-monitor-data-tables', [IndoorMonitoringController::class, 'index']);
+Route::get('/outdoor-monitor-data-tables', [OutdoorMonitoringController::class, 'index']);

@@ -38,11 +38,11 @@
             </i>
             <span>Monitoring</span>
         </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+        <div id="collapseTwo" class="collapse {{ Request::is('outdoor-monitor') || Request::is('indoor-monitor') ? 'show' : '' }}" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Pilih Monitor:</h6>
-                <a class="collapse-item" href="/outdoor-monitor">Monitor Utama</a>
-                <a class="collapse-item" href="/indoor-monitor">Monitor Dalam</a>
+                <a class="collapse-item {{ Request::is('outdoor-monitor') ? 'active' : '' }}" href="/outdoor-monitor">Monitor Utama</a>
+                <a class="collapse-item {{ Request::is('indoor-monitor') ? 'active' : '' }}" href="/indoor-monitor">Monitor Dalam</a>
             </div>
         </div>
     </li>
@@ -54,12 +54,12 @@
             <i class="fas fa-fw fa-table"></i>
             <span>Data Tables</span>
         </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+        <div id="collapseUtilities" class="collapse {{ Request::is('outdoor-monitor-data-tables') || Request::is('indoor-monitor-data-tables') ? 'show' : '' }}" aria-labelledby="headingUtilities"
             data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Pilih Data Monitor:</h6>
-                <a class="collapse-item" href="/outdoor-monitor-data-tables">Monitor Utama</a>
-                <a class="collapse-item" href="/indoor-monitor-data-tables">Monitor Dalam</a>
+                <a class="collapse-item {{ Request::is('outdoor-monitor-data-tables') ? 'active' : '' }}" href="/outdoor-monitor-data-tables">Monitor Utama</a>
+                <a class="collapse-item {{ Request::is('indoor-monitor-data-tables') ? 'active' : '' }}" href="/indoor-monitor-data-tables">Monitor Dalam</a>
             </div>
         </div>
     </li>

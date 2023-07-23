@@ -4,6 +4,7 @@
 #include <Wire.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
+#include <SoftwareSerial.h>
 
 #define WIFI_SSID ""
 #define WIFI_PASSWORD ""
@@ -14,6 +15,8 @@
 #define DHTType DHT22
 
 DHT dht = DHT(dhtpin, DHTType);
+SoftwareSerial lcd (2,3);
+
 unsigned long counts;          //variable for GM Tube events
 unsigned long previousMillis;  //variable  for measuring time
 unsigned long lastTime = 0;
@@ -30,21 +33,18 @@ void IRAM_ATTR impulse() {
   counts++;
 }
 
-// bool convertToJson(const tm& t, JsonVariant variant) {
-//   char buffer[32];
-//   strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S.%f", &t);
-//   return variant.set(buffer);
-// }
-
-
 void setup() {  //setup
   counts = 0;
   currentCPM = 0;
   rerataCPM = 0;
   sdCPM = 0;
   calcCPM = 0;
-  Serial.begin(115200);
 
+ //begin
+  Serial.begin(115200);
+  lcd.begin(9600);
+  Wire.begin();
+  dht.begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -55,9 +55,7 @@ void setup() {  //setup
   Serial.print("Connected to WiFi network with IP Address: ");
   Serial.println(WiFi.localIP());
 
-  Wire.begin();
-  dht.begin();
-
+  // PINMODE
   pinMode(dhtpin, INPUT);
   pinMode(13, INPUT);
   attachInterrupt(digitalPinToInterrupt(13), impulse, FALLING);  //define  external interrupts
@@ -65,6 +63,7 @@ void setup() {  //setup
 
 void loop() {  //main cycle
   delay(1000);
+  //pembacaan sensor DHT22
   float kelembaban = dht.readHumidity();
   float suhu = dht.readTemperature();
 
@@ -72,7 +71,7 @@ void loop() {  //main cycle
     Serial.println("Failed to read from the DHT sensor, check wiring.");
     return;
   }
-
+  //pembacaan interupt cacahan
   Serial.println("CPM Count: ");
   Serial.println(counts);
   unsigned long currentMillis = millis();
@@ -94,7 +93,7 @@ void loop() {  //main cycle
     }
     sdCPM = sqrt(sdCPM / currentCPM) / sqrt(currentCPM + 1);
 
-    dose_rate = Sieverts(pencacahanArray[currentCPM]);
+    doseRate = Sieverts(pencacahanArray[currentCPM]);
 
     Serial.println("Avg:  " + String(rerataCPM) + " +/- " + String(sdCPM) + "  ArrayVal: " + String(pencacahanArray[currentCPM]));
     currentCPM = currentCPM + 1;
@@ -108,8 +107,8 @@ void loop() {  //main cycle
         StaticJsonDocument<200> doc;
 
         doc["suhu"] = round2(suhu);
-        doc["kelembabab"] = round2(kelembaban);
-        doc["laju_dosis"] = round2(dose_rate);
+        doc["kelembaban"] = round2(kelembaban);
+        doc["dose_rate"] = round2(doseRate);
 
         String requestBody;
         serializeJson(doc, requestBody);
@@ -135,9 +134,13 @@ void loop() {  //main cycle
     Serial.print("% || Temperature: ");
     Serial.print(suhu);
     Serial.print("°C ");
+    
+    //LCD PRINT
+    lcdCMD(suhu);
+    lcdCMD(kelembaban);
+    lcdCMD(doseRate);
 
-    //Print new line
-    Serial.println();
+    
   }
 }
 
@@ -148,4 +151,12 @@ float Sieverts(float x) {
 
 float round2(float value) {
   return (int)(value * 100 + 0.5) / 100.00;
+}
+
+void lcdCMD(string cmd, float val){
+  lcd.print(cmd);
+  lcd.print(val);
+  lcd.write(255);
+  lcd.write(255);
+  lcd.write(255);
 }

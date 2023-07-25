@@ -27,10 +27,10 @@ class OutdoorMonitoringController extends Controller
     }
 
     public function fetchDataIndoorMonitor() {
-        $data = IndoorMonitoring::all();
+        $data = IndoorMonitoring::latest('time')->first();
 
         return response()->json([
-            'data' => $data
+            $data
         ]);
     }
 }

@@ -8,7 +8,7 @@
     <link rel = "icon" href = "{{ asset('assets/img/LogoGram_1.png') }}" type = "image/x-icon">
     <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/vendor/bootstrap-5.3.0/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/vendor/sb-admin-2/css/sb-admin-2.css?v=').time() }}" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets/vendor/sb-admin-2/css/sb-admin-2.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
     <title>Monitor Area Radiasi | {{ $title }}</title>
 </head>
@@ -34,5 +34,9 @@
     <script src="{{ asset('assets/vendor/sb-admin-2/js/demo/datatables-demo.js') }}"></script>
     <script src="{{ asset('js/dashboard/chart.js') }}"></script>
     <script src="{{ asset('js/dashboard/ajax.js') }}"></script>
+    <script src="{{ asset('js/indoor-monitor/chart.js') }}"></script>
+    <script src="{{ asset('js/indoor-monitor/ajax.js') }}"></script>
+    <script src="{{ asset('js/outdoor-monitor/chart.js') }}"></script>
+    <script src="{{ asset('js/outdoor-monitor/ajax.js') }}"></script>
 </body>
 </html>

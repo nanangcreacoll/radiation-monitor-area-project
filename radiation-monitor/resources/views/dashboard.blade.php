@@ -2,7 +2,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 ml-3 mb-3 text-gray-800">
+            <h1 class="h3 ml-3 mb-1 text-gray-800">
                 Dashboard
             </h1>
             <div class="d-none d-sm-inline-block shadow-sm">
@@ -21,8 +21,8 @@
                                 <div class="text font-weight-bold text-info text-uppercase mb-2">
                                     Laju Dosis Monitor Utama</div>
                                 <div class="h3 mb-0 font-weight-bold text-gray-800">
-                                    <text id="outdoor-monitor-data">
-                                        20
+                                    <text id="outdoor-dose-rate">
+                                        {{ json_encode($latestDoseRate->original['doseRateOutdoor']->dose_rate) }}
                                     </text>
                                     <sup class="font-weight-normal">&#181;Sv/jam</sup>
                                 </div>
@@ -39,8 +39,8 @@
                                 <div class="text font-weight-bold text-info text-uppercase mb-2">
                                     Laju Dosis Monitor Dalam</div>
                                 <div class="h3 mb-0 font-weight-bold text-gray-800">
-                                    <text id="indoor-monitor-data">
-                                        20
+                                    <text id="indoor-dose-rate">
+                                        {{ json_encode($latestDoseRate->original['doseRateIndoor']->dose_rate) }}
                                     </text>
                                     <sup class="font-weight-normal">&#181;Sv/jam</sup>
                                 </div>
@@ -57,7 +57,9 @@
                                 <div class="text font-weight-bold text-info text-uppercase mb-2">
                                     Laju Dosis Tertinggi</div>
                                 <div class="h3 mb-0 font-weight-bold text-gray-800">
-                                    20
+                                    <text id="highest-dose-rate">
+                                        20
+                                    </text>
                                     <sup class="font-weight-normal">&#181;Sv/jam</sup>
                                 </div>
                             </div>

@@ -1,45 +1,46 @@
 @extends('layouts.main')
 @section('content')
 <div class="container-fluid">
-    <h1 class="h3 ml-3 mb-3 text-gray-800">Dashboard</h1>
+    <h1 class="h3 ml-3 mb-3 text-gray-800">Data Table</h1>
 
-    <div class="row">
-        <div class="col-xl-6 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text font-weight-bold text-info text-uppercase mb-2">
-                                Laju Dosis Monitor Utama</div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                                <text id="temperature-data">
-                                    20
-                                </text>
-                                <sup class="font-weight-normal">&#181;Sv/jam</sup>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-info">Monitor Utama</h6>
         </div>
-        <div class="col-xl-6 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text font-weight-bold text-info text-uppercase mb-2">
-                                Laju Dosis Monitor Dalam</div>
-                            <div class="h3 mb-0 font-weight-bold text-gray-800">
-                                <text id="temperature-data">
-                                    20
-                                </text>
-                                <sup class="font-weight-normal">&#181;Sv/jam</sup>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>Laju Dosis (&#181;Sv/jam)</th>
+                            <th>Suhu (&#8451;)</th>
+                            <th>Kelembapan (%)</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>Laju Dosis</th>
+                            <th>Suhu</th>
+                            <th>Kelembapan</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        @foreach ($data as $item)
+                            <tr>
+                                <td>{{ $item->time }}</td>
+                                <td>{{ $item->dose_rate }}</td>
+                                <td>{{ $item->temperature }}</td>
+                                <td>{{ $item->humidity }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
+
 @endsection

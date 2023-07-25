@@ -13,14 +13,17 @@ class DashboardController extends Controller
         $currentDate = Carbon::now()->isoFormat('D MMMM YYYY');
         $currentDay = Carbon::now()->isoFormat('dddd');
 
+        $latestDoseRate = $this->getLatestDoseRate();
+
         return view('dashboard', [
             "title" => "Dashboard",
             "currentDate" => $currentDate,
-            "currentDay" => $currentDay
+            "currentDay" => $currentDay,
+            'latestDoseRate' => $latestDoseRate
         ]);
     }
 
-    public function getDoseRateDataChart() {
+    public function getDoseRateChart() {
         $doseRateIndoor = IndoorMonitoring::select('time', 'dose_rate')
                             ->latest('time')
                             ->take(30)
@@ -35,8 +38,18 @@ class DashboardController extends Controller
                             ->values();
 
         return response()->json([
-            'dose_rate_outdoor' => $doseRateOutdoor,
-            'dose_rate_indoor' => $doseRateIndoor
+            'doseRateOutdoor' => $doseRateOutdoor,
+            'doseRateIndoor' => $doseRateIndoor
+        ]);
+    }
+
+    public function getLatestDoseRate() {
+        $doseRateOutdoor = OutdoorMonitoring::latest('time')->first();
+        $doseRateIndoor = IndoorMonitoring::latest('time')->first();
+
+        return response()->json([
+            'doseRateOutdoor' => $doseRateOutdoor,
+            'doseRateIndoor' => $doseRateIndoor
         ]);
     }
 }

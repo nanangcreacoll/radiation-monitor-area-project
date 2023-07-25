@@ -20,4 +20,3 @@ use App\Http\Controllers\OutdoorMonitoringController;
 Route::post('/store-data-outdoor-monitor', [OutdoorMonitoringController::class, 'storeData'])->middleware('verifyApiKey');
 Route::post('/store-data-indoor-monitor', [IndoorMonitoringController::class, 'storeData'])->middleware('verifyApiKey');
 Route::get('/fetch-data-indoor-monitor', [OutdoorMonitoringController::class, 'fetchDataIndoorMonitor'])->middleware('verifyApiKey');
-Route::get('/dose-rate-chart', [DashboardController::class, 'getDoseRateDataChart'])->middleware('verifyApiKey');

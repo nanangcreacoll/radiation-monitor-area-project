@@ -24,8 +24,8 @@ function number_format(number, decimals, dec_point, thousands_sep) {
 }
 
 function createDoseRateChart(data) {
-    var outdoorData = data.dose_rate_outdoor;
-    var indoorData = data.dose_rate_indoor;
+    var outdoorData = data.doseRateOutdoor;
+    var indoorData = data.doseRateIndoor;
 
     var doseRateOutdoor = [];
     var doseRateIndoor = [];

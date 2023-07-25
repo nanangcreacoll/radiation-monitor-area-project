@@ -2,14 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\IndoorMonitoring;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\IndoorMonitoring;
 
 class IndoorMonitoringController extends Controller
 {
     public function index() {
+        $currentDate = Carbon::now()->isoFormat('D MMMM YYYY');
+        $currentDay = Carbon::now()->isoFormat('dddd');
+        $latestData = $this->getLatestData();
+
         return view('indoor-monitoring', [
             "title" => "Monitor Dalam",
+            "currentDate" => $currentDate,
+            "currentDay" => $currentDay,
+            "latestData" => $latestData
+        ]);
+    }
+
+    public function tables() {
+        $data = $this->getTablesData();
+
+        return view('indoor-data-tables', [
+            "title" => "Minitor Dalam Data Tables",
+            "data" => $data
         ]);
     }
 
@@ -23,5 +40,16 @@ class IndoorMonitoringController extends Controller
         return response()->json([
             'message' => 'Data store succesfully.'
         ]);
+    }
+
+    public function getLatestData() {
+        $data = IndoorMonitoring::latest('time')->first();
+        return response()->json($data);
+    }
+
+    public function getTablesData() {
+        $data = IndoorMonitoring::all();
+
+        return $data;
     }
 }

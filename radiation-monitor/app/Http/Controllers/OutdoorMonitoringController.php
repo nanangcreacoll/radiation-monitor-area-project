@@ -2,15 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use App\Models\IndoorMonitoring;
 use App\Models\OutdoorMonitoring;
-use Illuminate\Http\Request;
 
 class OutdoorMonitoringController extends Controller
 {
     public function index() {
+        $currentDate = Carbon::now()->isoFormat('D MMMM YYYY');
+        $currentDay = Carbon::now()->isoFormat('dddd');
+        $latestData = $this->getLatestData();
+        
         return view('outdoor-monitoring', [
             "title" => "Monitor Utama",
+            "currentDate" => $currentDate,
+            "currentDay" => $currentDay,
+            "latestData" => $latestData
+        ]);
+    }
+
+    public function tables() {
+        $data = $this->getTablesData();
+
+        return view('outdoor-data-tables', [
+            "title" => "Minitor Utama Data Tables",
+            "data" => $data
         ]);
     }
 
@@ -29,8 +46,18 @@ class OutdoorMonitoringController extends Controller
     public function fetchDataIndoorMonitor() {
         $data = IndoorMonitoring::latest('time')->first();
 
-        return response()->json([
-            $data
-        ]);
+        return response()->json($data);
     }
+
+    public function getLatestData() {
+        $data = OutdoorMonitoring::latest('time')->first();
+        return response()->json($data);
+    }
+
+    public function getTablesData() {
+        $data = OutdoorMonitoring::all();
+
+        return $data;
+    }
+    
 }

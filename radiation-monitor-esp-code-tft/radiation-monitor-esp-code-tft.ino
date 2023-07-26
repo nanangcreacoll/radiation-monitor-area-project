@@ -4,30 +4,33 @@
 #include <Wire.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
-#include <SoftwareSerial.h>
 
-#define WIFI_SSID ""
-#define WIFI_PASSWORD ""
-#define SERVER_NAME ""
+#define WIFI_SSID "Storyart"
+#define WIFI_PASSWORD "minimalmintakek"
+#define SERVER_POST "http://192.168.19.34:8000/api/store-data-outdoor-monitor"
+#define SERVER_GET "http://192.168.19.34:8000/api/fetch-data-indoor-monitor"
+#define API_KEY "DTkUNSHF1sFhjzNFY2z8gOOOMgL4PA4p"
 
 #define LOG_PERIOD 30000  // count rate (in milliseconds)
-#define dhtpin 27
+#define MAX_PERIOD 60000
+#define dhtpin 15
 #define DHTType DHT22
 
 DHT dht = DHT(dhtpin, DHTType);
-SoftwareSerial lcd (2,3);
+
 
 unsigned long counts;          //variable for GM Tube events
 unsigned long previousMillis;  //variable  for measuring time
 unsigned long lastTime = 0;
 unsigned long timerDelay = 1000;
+unsigned int multiplier;
 
-float rerataCPM;
-float sdCPM;
+double rerataCPM;
+double sdCPM;
 int currentCPM;
-float calcCPM;
-float dose_rate;
-float pencacahanArray[100];
+double calcCPM;
+double doseRate;
+double pencacahanArray[100];
 
 void IRAM_ATTR impulse() {
   counts++;
@@ -40,46 +43,51 @@ void setup() {  //setup
   sdCPM = 0;
   calcCPM = 0;
 
+  multiplier = MAX_PERIOD / LOG_PERIOD;
+
  //begin
   Serial.begin(115200);
-  lcd.begin(9600);
   Wire.begin();
   dht.begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
-    Serial.println("Connecting to WiFi...");
+    // Serial.println("Connecting to WiFi...");
   }
-  Serial.println("");
-  Serial.print("Connected to WiFi network with IP Address: ");
-  Serial.println(WiFi.localIP());
+  // Serial.println("");
+  // Serial.print("Connected to WiFi network with IP Address: ");
+  // Serial.println(WiFi.localIP());
 
   // PINMODE
   pinMode(dhtpin, INPUT);
-  pinMode(13, INPUT);
-  attachInterrupt(digitalPinToInterrupt(13), impulse, FALLING);  //define  external interrupts
+  pinMode(12, INPUT);
+  attachInterrupt(digitalPinToInterrupt(12), impulse, FALLING);  //define  external interrupts
 }
 
 void loop() {  //main cycle
   delay(1000);
   //pembacaan sensor DHT22
-  float kelembaban = dht.readHumidity();
-  float suhu = dht.readTemperature();
+  double kelembaban = dht.readHumidity();
+  double suhu = dht.readTemperature();
+
+  double suhuDalam;
+  double kelembabanDalam;
+  double doseRateDalam;
 
   if (isnan(kelembaban) || isnan(suhu)) {
-    Serial.println("Failed to read from the DHT sensor, check wiring.");
+    // Serial.println("Failed to read from the DHT sensor, check wiring.");
     return;
   }
   //pembacaan interupt cacahan
-  Serial.println("CPM Count: ");
-  Serial.println(counts);
+  // Serial.print("CPM Count: ");
+  // Serial.println(counts);
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis > LOG_PERIOD) {
     previousMillis = currentMillis;
-    pencacahanArray[currentCPM] = counts * 2;
-    Serial.println("uSv/hr: ");
-    Serial.println(Sieverts(pencacahanArray[currentCPM]));
+    pencacahanArray[currentCPM] = counts * multiplier;
+    // Serial.print("uSv/hr: ");
+    // Serial.println(Sieverts(pencacahanArray[currentCPM]));
     counts = 0;
     rerataCPM = 0;
     sdCPM = 0;
@@ -95,68 +103,108 @@ void loop() {  //main cycle
 
     doseRate = Sieverts(pencacahanArray[currentCPM]);
 
-    Serial.println("Avg:  " + String(rerataCPM) + " +/- " + String(sdCPM) + "  ArrayVal: " + String(pencacahanArray[currentCPM]));
+    //Serial.println("Avg:  " + String(rerataCPM) + " +/- " + String(sdCPM) + "  ArrayVal: " + String(pencacahanArray[currentCPM]));
     currentCPM = currentCPM + 1;
-    if ((millis() - lastTime) > timerDelay) {
-      if (WiFi.status() == WL_CONNECTED) {
-        HTTPClient http;
-
-        http.begin(SERVER_NAME);
-        http.addHeader("Content-Type", "application/json");
-
-        StaticJsonDocument<200> doc;
-
-        doc["suhu"] = round2(suhu);
-        doc["kelembaban"] = round2(kelembaban);
-        doc["dose_rate"] = round2(doseRate);
-
-        String requestBody;
-        serializeJson(doc, requestBody);
-
-        int httpResponseCode = http.POST(requestBody);
-        Serial.println("\n" + requestBody + "\n");
-
-        if (httpResponseCode > 0) {
-          String response = http.getString();
-
-          Serial.print("code: ");
-          Serial.println(httpResponseCode);
-          Serial.println(response + "\n");
-        } else {
-          Serial.printf("Error occured while sending HTTP POST: %s\n", http.errorToString(httpResponseCode).c_str());
-        }
-      }
-    }
     //Serial Print
-    Serial.print("Humidity: ");
-    Serial.print(kelembaban);
-    //Print out the Temperature
-    Serial.print("% || Temperature: ");
-    Serial.print(suhu);
-    Serial.print("°C ");
-    
-    //LCD PRINT
-    lcdCMD(suhu);
-    lcdCMD(kelembaban);
-    lcdCMD(doseRate);
-
     
   }
+  if ((millis() - lastTime) > timerDelay) {
+    if (WiFi.status() == WL_CONNECTED) {
+      HTTPClient http;
+
+      //POST
+      http.begin(SERVER_POST);
+      http.addHeader("Content-Type", "application/json");
+      http.addHeader("Api-Key", API_KEY);
+
+      StaticJsonDocument<200> docPost;
+
+      docPost["temperature"] = round2(suhu);
+      docPost["humidity"] = round2(kelembaban);
+      docPost["dose_rate"] = round2(doseRate);
+
+      String requestBody;
+      serializeJson(docPost, requestBody);
+
+      int httpResponseCodePost = http.POST(requestBody);
+      // Serial.println("\n" + requestBody + "\n");
+
+      if (httpResponseCodePost > 0) {
+        String response = http.getString();
+
+        // Serial.print("code: ");
+        // Serial.println(httpResponseCodePost);
+        // Serial.println(response + "\n");
+      } else {
+        // Serial.printf("Error occured while sending HTTP POST: %s\n", http.errorToString(httpResponseCodePost).c_str());
+      }
+
+      http.end();
+
+      //GET
+      http.begin(SERVER_GET);
+      http.addHeader("Content-Type", "application/json");
+      http.addHeader("Api-Key", API_KEY);
+
+      StaticJsonDocument<1024> docGet;
+
+      int httpResponseCodeGet = http.GET();
+      if (httpResponseCodeGet == HTTP_CODE_OK) {
+        String payload = http.getString();
+        // Serial.println(payload);
+
+        deserializeJson(docGet, payload);
+
+        suhuDalam = docGet[0]["temperature"];
+        kelembabanDalam = docGet[0]["humidity"];
+        doseRateDalam = docGet[0]["dose_rate"];
+
+        // Serial.print("Temperature dalam: ");
+        // Serial.println(temperatureDalam);
+        // Serial.print("Humidity dalam: ");
+        // Serial.println(humidityDalam);
+        // Serial.print("Laju Dosis dalam: ");
+        // Serial.println(doseRateDalam);
+
+      } else {
+        // Serial.print("code: ");
+        // Serial.println(httpResponseCodeGet);
+        // Serial.printf("Error occured while receive HTTP GET: %s\n", http.errorToString(httpResponseCodeGet).c_str());
+      }
+
+      http.end();
+    }
+  }
+  // Serial.print("Humidity: ");
+  // Serial.print(kelembaban);
+  // //Print out the Temperature
+  // Serial.print("% || Temperature: ");
+  // Serial.print(suhu);
+  // Serial.print("°C ");
+  
+  //LCD PRINT
+  lcdCMD("suhu.txt=",suhu);
+  lcdCMD("kelembaban.txt=",kelembaban);
+  lcdCMD("doseRate.txt=",doseRate);
+  lcdCMD("suhu1.txt=",suhuDalam);
+  lcdCMD("kelembaban2.txt=",kelembabanDalam);
+  lcdCMD("doseRate1.txt=",doseRateDalam);
 }
 
-float Sieverts(float x) {
-  float y = x * 0.00812;
+double Sieverts(double x) {
+  double y = x * 0.00571;
   return y;
 }
 
-float round2(float value) {
+double round2(double value) {
   return (int)(value * 100 + 0.5) / 100.00;
 }
 
-void lcdCMD(string cmd, float val){
-  lcd.print(cmd);
-  lcd.print(val);
-  lcd.write(255);
-  lcd.write(255);
-  lcd.write(255);
+void lcdCMD(String cmd, double val){
+  String valStr = String(val);
+  Serial.print(cmd);
+  Serial.print("\"" + valStr +"\"");
+  Serial.write(255);
+  Serial.write(255);
+  Serial.write(255);
 }

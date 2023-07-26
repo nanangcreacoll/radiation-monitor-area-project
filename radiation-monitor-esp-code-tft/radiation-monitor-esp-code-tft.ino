@@ -1,14 +1,13 @@
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <HTTPClient.h>
-#include <Wire.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
 
-#define WIFI_SSID "Storyart"
-#define WIFI_PASSWORD "minimalmintakek"
-#define SERVER_POST "http://192.168.19.34:8000/api/store-data-outdoor-monitor"
-#define SERVER_GET "http://192.168.19.34:8000/api/fetch-data-indoor-monitor"
+#define WIFI_SSID "realme 5i"
+#define WIFI_PASSWORD "qwerty123"
+#define SERVER_POST "http://192.168.43.94:8000/api/store-data-outdoor-monitor"
+#define SERVER_GET "http://192.168.43.94:8000/api/fetch-data-indoor-monitor"
 #define API_KEY "DTkUNSHF1sFhjzNFY2z8gOOOMgL4PA4p"
 
 #define LOG_PERIOD 30000  // count rate (in milliseconds)
@@ -17,7 +16,6 @@
 #define DHTType DHT22
 
 DHT dht = DHT(dhtpin, DHTType);
-
 
 unsigned long counts;          //variable for GM Tube events
 unsigned long previousMillis;  //variable  for measuring time
@@ -46,8 +44,7 @@ void setup() {  //setup
   multiplier = MAX_PERIOD / LOG_PERIOD;
 
  //begin
-  Serial.begin(115200);
-  Wire.begin();
+  Serial.begin(9600);
   dht.begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
@@ -68,11 +65,11 @@ void setup() {  //setup
 void loop() {  //main cycle
   delay(1000);
   //pembacaan sensor DHT22
-  double kelembaban = dht.readHumidity();
+  double kelembapan = dht.readHumidity();
   double suhu = dht.readTemperature();
 
   double suhuDalam;
-  double kelembabanDalam;
+  double kelembapanDalam;
   double doseRateDalam;
 
   if (isnan(kelembaban) || isnan(suhu)) {
@@ -151,18 +148,18 @@ void loop() {  //main cycle
       int httpResponseCodeGet = http.GET();
       if (httpResponseCodeGet == HTTP_CODE_OK) {
         String payload = http.getString();
-        // Serial.println(payload);
+        Serial.println(payload);
 
         deserializeJson(docGet, payload);
 
-        suhuDalam = docGet[0]["temperature"];
-        kelembabanDalam = docGet[0]["humidity"];
-        doseRateDalam = docGet[0]["dose_rate"];
+        suhuDalam = docGet["temperature"];
+        kelembabanDalam = docGet["humidity"];
+        doseRateDalam = docGet["dose_rate"];
 
         // Serial.print("Temperature dalam: ");
-        // Serial.println(temperatureDalam);
+        // Serial.println(suhuDalam);
         // Serial.print("Humidity dalam: ");
-        // Serial.println(humidityDalam);
+        // Serial.println(kelembabanDalam);
         // Serial.print("Laju Dosis dalam: ");
         // Serial.println(doseRateDalam);
 
@@ -183,6 +180,9 @@ void loop() {  //main cycle
   // Serial.print("°C ");
   
   //LCD PRINT
+  Serial.write(0xff);
+  Serial.write(0xff);
+  Serial.write(0xff);
   lcdCMD("suhu.txt=",suhu);
   lcdCMD("kelembaban.txt=",kelembaban);
   lcdCMD("doseRate.txt=",doseRate);
@@ -204,7 +204,7 @@ void lcdCMD(String cmd, double val){
   String valStr = String(val);
   Serial.print(cmd);
   Serial.print("\"" + valStr +"\"");
-  Serial.write(255);
-  Serial.write(255);
-  Serial.write(255);
+  Serial.write(0xff);
+  Serial.write(0xff);
+  Serial.write(0xff);
 }

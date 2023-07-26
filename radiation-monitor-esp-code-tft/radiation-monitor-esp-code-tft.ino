@@ -10,15 +10,17 @@
 #define SERVER_GET "http://192.168.43.94:8000/api/fetch-data-indoor-monitor"
 #define API_KEY "DTkUNSHF1sFhjzNFY2z8gOOOMgL4PA4p"
 
-#define LOG_PERIOD 30000  // count rate (in milliseconds)
+#define LOG_PERIOD 30000 // count rate (in milliseconds)
 #define MAX_PERIOD 60000
 #define dhtpin 15
 #define DHTType DHT22
 
+#define DOSE_RATE_Tres 1
+
 DHT dht = DHT(dhtpin, DHTType);
 
-unsigned long counts;          //variable for GM Tube events
-unsigned long previousMillis;  //variable  for measuring time
+unsigned long counts;         // variable for GM Tube events
+unsigned long previousMillis; // variable  for measuring time
 unsigned long lastTime = 0;
 unsigned long timerDelay = 1000;
 unsigned int multiplier;
@@ -30,11 +32,13 @@ double calcCPM;
 double doseRate;
 double pencacahanArray[100];
 
-void IRAM_ATTR impulse() {
+void IRAM_ATTR impulse()
+{
   counts++;
 }
 
-void setup() {  //setup
+void setup()
+{ // setup
   counts = 0;
   currentCPM = 0;
   rerataCPM = 0;
@@ -43,15 +47,24 @@ void setup() {  //setup
 
   multiplier = MAX_PERIOD / LOG_PERIOD;
 
- //begin
+  // begin
   Serial.begin(9600);
   dht.begin();
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  Serial.write(0xff);
+  Serial.write(0xff);
+  Serial.write(0xff);
+  lcdStr("wifiConnect.txt=", "Not Connected");
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(1000);
+    lcdStr("wifiConnect.txt=", "Connecting ...");
     // Serial.println("Connecting to WiFi...");
   }
+
+  lcdStr("wifiConnect.txt=", "Wifi Connected");
   // Serial.println("");
   // Serial.print("Connected to WiFi network with IP Address: ");
   // Serial.println(WiFi.localIP());
@@ -59,12 +72,12 @@ void setup() {  //setup
   // PINMODE
   pinMode(dhtpin, INPUT);
   pinMode(12, INPUT);
-  attachInterrupt(digitalPinToInterrupt(12), impulse, FALLING);  //define  external interrupts
+  attachInterrupt(digitalPinToInterrupt(12), impulse, FALLING); // define  external interrupts
 }
 
-void loop() {  //main cycle
-  delay(1000);
-  //pembacaan sensor DHT22
+void loop()
+{ // main cycle
+  // pembacaan sensor DHT22
   double kelembapan = dht.readHumidity();
   double suhu = dht.readTemperature();
 
@@ -72,15 +85,17 @@ void loop() {  //main cycle
   double kelembapanDalam;
   double doseRateDalam;
 
-  if (isnan(kelembaban) || isnan(suhu)) {
+  if (isnan(kelembapan) || isnan(suhu))
+  {
     // Serial.println("Failed to read from the DHT sensor, check wiring.");
     return;
   }
-  //pembacaan interupt cacahan
-  // Serial.print("CPM Count: ");
-  // Serial.println(counts);
+  // pembacaan interupt cacahan
+  //  Serial.print("CPM Count: ");
+  //  Serial.println(counts);
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis > LOG_PERIOD) {
+  if (currentMillis - previousMillis > LOG_PERIOD)
+  {
     previousMillis = currentMillis;
     pencacahanArray[currentCPM] = counts * multiplier;
     // Serial.print("uSv/hr: ");
@@ -88,28 +103,32 @@ void loop() {  //main cycle
     counts = 0;
     rerataCPM = 0;
     sdCPM = 0;
-    //calc avg and sd
-    for (int x = 0; x < currentCPM + 1; x++) {
+    // calc avg and sd
+    for (int x = 0; x < currentCPM + 1; x++)
+    {
       rerataCPM = rerataCPM + pencacahanArray[x];
     }
     rerataCPM = rerataCPM / (currentCPM + 1);
-    for (int x = 0; x < currentCPM + 1; x++) {
+    for (int x = 0; x < currentCPM + 1; x++)
+    {
       sdCPM = sdCPM + sq(pencacahanArray[x] - rerataCPM);
     }
     sdCPM = sqrt(sdCPM / currentCPM) / sqrt(currentCPM + 1);
 
     doseRate = Sieverts(pencacahanArray[currentCPM]);
 
-    //Serial.println("Avg:  " + String(rerataCPM) + " +/- " + String(sdCPM) + "  ArrayVal: " + String(pencacahanArray[currentCPM]));
+    // Serial.println("Avg:  " + String(rerataCPM) + " +/- " + String(sdCPM) + "  ArrayVal: " + String(pencacahanArray[currentCPM]));
     currentCPM = currentCPM + 1;
-    //Serial Print
-    
+    // Serial Print
   }
-  if ((millis() - lastTime) > timerDelay) {
-    if (WiFi.status() == WL_CONNECTED) {
+  if ((millis() - lastTime) > timerDelay)
+  {
+    if (WiFi.status() == WL_CONNECTED)
+    {
+      lcdStr("wifiConnect.txt=", "Wifi Connected");
       HTTPClient http;
 
-      //POST
+      // POST
       http.begin(SERVER_POST);
       http.addHeader("Content-Type", "application/json");
       http.addHeader("Api-Key", API_KEY);
@@ -117,7 +136,7 @@ void loop() {  //main cycle
       StaticJsonDocument<200> docPost;
 
       docPost["temperature"] = round2(suhu);
-      docPost["humidity"] = round2(kelembaban);
+      docPost["humidity"] = round2(kelembapan);
       docPost["dose_rate"] = round2(doseRate);
 
       String requestBody;
@@ -126,19 +145,22 @@ void loop() {  //main cycle
       int httpResponseCodePost = http.POST(requestBody);
       // Serial.println("\n" + requestBody + "\n");
 
-      if (httpResponseCodePost > 0) {
+      if (httpResponseCodePost > 0)
+      {
         String response = http.getString();
 
         // Serial.print("code: ");
         // Serial.println(httpResponseCodePost);
         // Serial.println(response + "\n");
-      } else {
+      }
+      else
+      {
         // Serial.printf("Error occured while sending HTTP POST: %s\n", http.errorToString(httpResponseCodePost).c_str());
       }
 
       http.end();
 
-      //GET
+      // GET
       http.begin(SERVER_GET);
       http.addHeader("Content-Type", "application/json");
       http.addHeader("Api-Key", API_KEY);
@@ -146,14 +168,15 @@ void loop() {  //main cycle
       StaticJsonDocument<1024> docGet;
 
       int httpResponseCodeGet = http.GET();
-      if (httpResponseCodeGet == HTTP_CODE_OK) {
+      if (httpResponseCodeGet == HTTP_CODE_OK)
+      {
         String payload = http.getString();
-        Serial.println(payload);
+        // Serial.println(payload);
 
         deserializeJson(docGet, payload);
 
         suhuDalam = docGet["temperature"];
-        kelembabanDalam = docGet["humidity"];
+        kelembapanDalam = docGet["humidity"];
         doseRateDalam = docGet["dose_rate"];
 
         // Serial.print("Temperature dalam: ");
@@ -163,14 +186,28 @@ void loop() {  //main cycle
         // Serial.print("Laju Dosis dalam: ");
         // Serial.println(doseRateDalam);
 
-      } else {
+      } /*else {
         // Serial.print("code: ");
         // Serial.println(httpResponseCodeGet);
         // Serial.printf("Error occured while receive HTTP GET: %s\n", http.errorToString(httpResponseCodeGet).c_str());
-      }
+      }*/
 
       http.end();
     }
+
+    if (doseRate > DOSE_RATE_Tres) {
+      lcdStr("status.txt=", "Status: Melebih NBD");
+    } else {
+      lcdStr("status.txt=", "Status: Aman");
+    }
+
+    // LCD PRINT
+    lcdVal("suhu1.txt=", suhu);
+    lcdVal("kelembapan1.txt=", kelembapan);
+    lcdVal("doseRate1.txt=", doseRate);
+    lcdVal("suhu2.txt=", suhuDalam);
+    lcdVal("kelembapan2.txt=", kelembapanDalam);
+    lcdVal("doseRate2.txt=", doseRateDalam);
   }
   // Serial.print("Humidity: ");
   // Serial.print(kelembaban);
@@ -178,32 +215,33 @@ void loop() {  //main cycle
   // Serial.print("% || Temperature: ");
   // Serial.print(suhu);
   // Serial.print("°C ");
-  
-  //LCD PRINT
-  Serial.write(0xff);
-  Serial.write(0xff);
-  Serial.write(0xff);
-  lcdCMD("suhu.txt=",suhu);
-  lcdCMD("kelembaban.txt=",kelembaban);
-  lcdCMD("doseRate.txt=",doseRate);
-  lcdCMD("suhu1.txt=",suhuDalam);
-  lcdCMD("kelembaban2.txt=",kelembabanDalam);
-  lcdCMD("doseRate1.txt=",doseRateDalam);
 }
 
-double Sieverts(double x) {
+double Sieverts(double x)
+{
   double y = x * 0.00571;
   return y;
 }
 
-double round2(double value) {
+double round2(double value)
+{
   return (int)(value * 100 + 0.5) / 100.00;
 }
 
-void lcdCMD(String cmd, double val){
+void lcdVal(String cmd, double val)
+{
   String valStr = String(val);
   Serial.print(cmd);
-  Serial.print("\"" + valStr +"\"");
+  Serial.print("\"" + valStr + "\"");
+  Serial.write(0xff);
+  Serial.write(0xff);
+  Serial.write(0xff);
+}
+
+void lcdStr(String cmd, String str)
+{
+  Serial.print(cmd);
+  Serial.print("\"" + str + "\"");
   Serial.write(0xff);
   Serial.write(0xff);
   Serial.write(0xff);

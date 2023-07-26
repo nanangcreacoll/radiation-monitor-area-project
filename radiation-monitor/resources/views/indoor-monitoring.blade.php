@@ -3,7 +3,7 @@
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 ml-3 mb-1 text-gray-800">
-            Monitor Utama
+            Monitor Dalam
         </h1>
         <div class="d-none d-sm-inline-block shadow-sm">
             <p class="mr-3 ml-3 mb-2 mt-2">

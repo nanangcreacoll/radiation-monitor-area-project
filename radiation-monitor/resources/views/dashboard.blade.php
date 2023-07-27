@@ -58,7 +58,7 @@
                                     Laju Dosis Tertinggi</div>
                                 <div class="h3 mb-0 font-weight-bold text-gray-800">
                                     <text id="highest-dose-rate">
-                                        20
+                                        {{ json_encode($highestDoseRate->original['highest_dose_rate']) }}
                                     </text>
                                     <sup class="font-weight-normal">&#181;Sv/jam</sup>
                                 </div>

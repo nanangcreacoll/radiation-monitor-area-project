@@ -45,7 +45,6 @@ class OutdoorMonitoringController extends Controller
 
     public function fetchDataIndoorMonitor() {
         $data = IndoorMonitoring::latest('time')->first();
-
         return response()->json($data);
     }
 
@@ -56,8 +55,15 @@ class OutdoorMonitoringController extends Controller
 
     public function getTablesData() {
         $data = OutdoorMonitoring::all();
-
         return $data;
     }
     
+    public function getDataChart() {
+        $data = OutdoorMonitoring::latest('time')
+                ->take(30)
+                ->get()
+                ->reverse()
+                ->values();
+        return response()->json($data);
+    }
 }

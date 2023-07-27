@@ -14,12 +14,14 @@ class DashboardController extends Controller
         $currentDay = Carbon::now()->isoFormat('dddd');
 
         $latestDoseRate = $this->getLatestDoseRate();
+        $highestDoseRate = $this->getHighestDoseRate();
 
         return view('dashboard', [
             "title" => "Dashboard",
             "currentDate" => $currentDate,
             "currentDay" => $currentDay,
-            'latestDoseRate' => $latestDoseRate
+            'latestDoseRate' => $latestDoseRate,
+            'highestDoseRate' => $highestDoseRate
         ]);
     }
 
@@ -51,5 +53,16 @@ class DashboardController extends Controller
             'doseRateOutdoor' => $doseRateOutdoor,
             'doseRateIndoor' => $doseRateIndoor
         ]);
+    }
+
+    public function getHighestDoseRate() {
+        $time = Carbon::now()->format('Y-m-d');
+
+        $highestDoseRateOutdoor = OutdoorMonitoring::whereDate('time', $time)->max('dose_rate');
+        $highestDoseRateIndoor = IndoorMonitoring::whereDate('time', $time)->max('dose_rate');
+
+        $highestDoseRate = max($highestDoseRateOutdoor, $highestDoseRateIndoor);
+        
+        return response()->json(['highest_dose_rate' => $highestDoseRate]);
     }
 }

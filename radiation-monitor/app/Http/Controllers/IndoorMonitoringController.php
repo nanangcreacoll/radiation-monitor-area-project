@@ -52,4 +52,13 @@ class IndoorMonitoringController extends Controller
 
         return $data;
     }
+
+    public function getDataChart() {
+        $data = IndoorMonitoring::latest('time')
+                ->take(30)
+                ->get()
+                ->reverse()
+                ->values();
+        return response()->json($data);
+    }
 }

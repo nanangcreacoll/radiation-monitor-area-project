@@ -25,6 +25,11 @@ $(document).ready(function() {
             method: 'GET',
             success: function(response) {
                 $('#outdoor-dose-rate').html(response.doseRateOutdoor.dose_rate);
+                if (response.doseRateOutdoor.dose_rate > 1) {
+                    $('.toast').toast('show');
+                } else {
+                    $('.toast').toast('hide');
+                }
             },
             error: function(xhr) {
                 console.log(xhr.responseText);
@@ -46,13 +51,30 @@ $(document).ready(function() {
             }
         });
     }
+    function highestDoseRate() {
+        $.ajax({
+            url: 'highest-dose-rate',
+            headers: {
+                'Api-Key': apiKey
+            },
+            method: 'GET',
+            success: function(response) {
+                $('#highest-dose-rate').html(response.highest_dose_rate);
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    }
     if (window.location.pathname == '/') {
         setInterval(function() {
+            highestDoseRate();
             latestIndoorDoseRate();
             latestOutdoorDoseRate();
             doseRateChart();
         }, 1000);
         
+        highestDoseRate();
         latestIndoorDoseRate();
         latestOutdoorDoseRate();
         doseRateChart();

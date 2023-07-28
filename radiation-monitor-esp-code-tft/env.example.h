@@ -1,0 +1,5 @@
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+#define SERVER_POST ""
+#define SERVER_GET ""
+#define API_KEY ""

@@ -3,6 +3,7 @@
 #include <HTTPClient.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
+#include "env.h"
 
 #define WIFI_SSID "realme 5i"
 #define WIFI_PASSWORD "qwerty123"

@@ -3,12 +3,7 @@
 #include <HTTPClient.h>
 #include <DHT.h>
 #include <ArduinoJson.h>
-
-#define WIFI_SSID "realme 5i"
-#define WIFI_PASSWORD "qwerty123"
-#define SERVER_POST "http://192.168.43.94:8000/api/store-data-outdoor-monitor"
-#define SERVER_GET "http://192.168.43.94:8000/api/fetch-data-indoor-monitor"
-#define API_KEY "DTkUNSHF1sFhjzNFY2z8gOOOMgL4PA4p"
+#include "env.h"
 
 #define LOG_PERIOD 30000 // count rate (in milliseconds)
 #define MAX_PERIOD 60000

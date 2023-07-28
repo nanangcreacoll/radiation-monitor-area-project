@@ -13,7 +13,7 @@
     <title>Monitor Area Radiasi | {{ $title }}</title>
 </head>
 <body id="page-top">
-    <div class="toast mt-4 bg-danger" style="position: absolute; top: 0; right: 0; z-index: 1; opacity:0.8">
+    <div class="toast mt-4 mr-2 bg-danger" style="position: absolute; top: ; right: 0; z-index: 1; opacity:0.8">
         <div class="toast-body text-light">
           Peringatan: Laju dosis lebih.
         </div>

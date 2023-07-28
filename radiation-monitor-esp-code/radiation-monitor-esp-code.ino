@@ -9,7 +9,7 @@
 #define SERVER_POST "http://192.168.43.94:8000/api/store-data-indoor-monitor"
 #define API_KEY "DTkUNSHF1sFhjzNFY2z8gOOOMgL4PA4p"
 
-#define LOG_PERIOD 30000  // count rate (in milliseconds)
+#define LOG_PERIOD 30000 // count rate (in milliseconds)
 #define MAX_PERIOD 60000
 #define dhtpin 15
 #define DHTType DHT22
@@ -62,7 +62,7 @@ void setup() {  //setup
 }
 
 void loop() {  //main cycle
-  delay(1000);
+  // delay(1000);
   //pembacaan sensor DHT22
   double kelembaban = dht.readHumidity();
   double suhu = dht.readTemperature();
@@ -78,8 +78,9 @@ void loop() {  //main cycle
   if (currentMillis - previousMillis > LOG_PERIOD) {
     previousMillis = currentMillis;
     pencacahanArray[currentCPM] = counts * multiplier;
-    Serial.print("uSv/hr: ");
-    Serial.println(Sieverts(pencacahanArray[currentCPM]));
+    //pencacahanArray[currentCPM] = counts;
+    doseRate = Sieverts(pencacahanArray[currentCPM]);  
+    
     counts = 0;
     rerataCPM = 0;
     sdCPM = 0;
@@ -93,11 +94,15 @@ void loop() {  //main cycle
     }
     sdCPM = sqrt(sdCPM / currentCPM) / sqrt(currentCPM + 1);
 
-    doseRate = Sieverts(pencacahanArray[currentCPM]);
-
-    //Serial.println("Avg:  " + String(rerataCPM) + " +/- " + String(sdCPM) + "  ArrayVal: " + String(pencacahanArray[currentCPM]));
-    currentCPM = currentCPM + 1;    
+    Serial.println("Avg:  " + String(rerataCPM) + " +/- " + String(sdCPM) + "  ArrayVal: " + String(pencacahanArray[currentCPM]));
+    currentCPM = currentCPM + 1;  
   }
+
+  
+  // doseRate = Sieverts(rerataCPM);
+  Serial.print("uSv/hr: ");
+  Serial.println(doseRate);
+
   if ((millis() - lastTime) > timerDelay) {
     if (WiFi.status() == WL_CONNECTED) {
       HTTPClient http;
@@ -130,7 +135,7 @@ void loop() {  //main cycle
       }
 
       http.end();
-    }
+    } 
   }
   Serial.print("Humidity: ");
   Serial.print(kelembaban);

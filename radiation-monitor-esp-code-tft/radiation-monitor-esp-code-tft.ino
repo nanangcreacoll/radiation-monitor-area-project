@@ -193,10 +193,12 @@ void loop()
       }*/
 
       http.end();
+    } else {
+      lcdStr("wifiConnect.txt=", "Not Connected");
     }
 
     if (doseRate > DOSE_RATE_Tres) {
-      lcdStr("status.txt=", "Status: Melebih NBD");
+      lcdStr("status.txt=", "Peringatan, laju dosis lebih");
     } else {
       lcdStr("status.txt=", "Status: Aman");
     }

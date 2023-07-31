@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="api-key" content="{{ config('app.api_key') }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel = "icon" href = "{{ asset('assets/img/LogoGram_1.png') }}" type = "image/x-icon">
+    {{-- <link rel = "icon" href = "{{ asset('assets/img/LogoGram_1.png') }}" type = "image/x-icon"> --}}
+    <link rel = "icon" href = "{{ asset('assets/img/tnb 2.png') }}" type = "image/x-icon">
     <link href="{{ asset('assets/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets/vendor/bootstrap-5.3.0/css/bootstrap.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/sb-admin-2/css/sb-admin-2.css') }}" rel="stylesheet" type="text/css">

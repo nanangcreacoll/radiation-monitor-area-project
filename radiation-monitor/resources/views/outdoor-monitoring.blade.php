@@ -22,7 +22,7 @@
                                 Laju Dosis</div>
                             <div class="h3 mb-0 font-weight-bold text-gray-800">
                                 <text id="outdoor-dose-rate">
-                                    {{ json_encode($latestData->original['dose_rate']) }}
+                                    {{ trim(json_encode($latestData->original['dose_rate']),'"')  }}
                                 </text>
                                 <sup class="font-weight-normal">&#181;Sv/jam</sup>
                             </div>
@@ -40,7 +40,7 @@
                                 Suhu</div>
                             <div class="h3 mb-0 font-weight-bold text-gray-800">
                                 <text id="outdoor-temperature">
-                                    {{ json_encode($latestData->original['temperature']) }}
+                                    {{ trim(json_encode($latestData->original['temperature']),'"')  }}
                                 </text>
                                 <sup class="font-weight-normal">&#8451;</sup>
                             </div>
@@ -58,7 +58,7 @@
                                 Kelembapan</div>
                             <div class="h3 mb-0 font-weight-bold text-gray-800">
                                 <text id="outdoor-humidity">
-                                    {{ json_encode($latestData->original['humidity']) }}
+                                    {{ trim(json_encode($latestData->original['humidity']),'"') }}
                                 </text>
                                 <sup class="font-weight-normal">%</sup>
                             </div>

@@ -22,7 +22,7 @@
                                     Laju Dosis Monitor Utama</div>
                                 <div class="h3 mb-0 font-weight-bold text-gray-800">
                                     <text id="outdoor-dose-rate">
-                                        {{ json_encode($latestDoseRate->original['doseRateOutdoor']->dose_rate) }}
+                                        {{ trim(json_encode($latestDoseRate->original['doseRateOutdoor']->dose_rate),'"')  }}
                                     </text>
                                     <sup class="font-weight-normal">&#181;Sv/jam</sup>
                                 </div>
@@ -40,7 +40,7 @@
                                     Laju Dosis Monitor Dalam</div>
                                 <div class="h3 mb-0 font-weight-bold text-gray-800">
                                     <text id="indoor-dose-rate">
-                                        {{ json_encode($latestDoseRate->original['doseRateIndoor']->dose_rate) }}
+                                        {{ trim(json_encode($latestDoseRate->original['doseRateIndoor']->dose_rate),'"')  }}
                                     </text>
                                     <sup class="font-weight-normal">&#181;Sv/jam</sup>
                                 </div>
@@ -58,7 +58,7 @@
                                     Laju Dosis Tertinggi</div>
                                 <div class="h3 mb-0 font-weight-bold text-gray-800">
                                     <text id="highest-dose-rate">
-                                        {{ json_encode($highestDoseRate->original['highest_dose_rate']) }}
+                                        {{ trim(json_encode($highestDoseRate->original['highest_dose_rate']),'"') }}
                                     </text>
                                     <sup class="font-weight-normal">&#181;Sv/jam</sup>
                                 </div>
